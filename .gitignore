@@ -1,0 +1,10 @@
+# Binaries
+main
+*.exe
+
+# Environment files
+.env
+*.env
+
+# Go
+vendor/
