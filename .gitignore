@@ -6,5 +6,8 @@ main
 .env
 *.env
 
+# Credentials
+*.txt
+
 # Go
 vendor/
