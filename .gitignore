@@ -11,3 +11,6 @@ main
 
 # Go
 vendor/
+
+# AI tooling config
+CLAUDE.md
