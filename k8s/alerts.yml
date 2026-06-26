@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: calorie-tracker
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: calorie-tracker
+      rules:
+        - alert: CalorieTrackerDown
+          expr: up{job="calorie-tracker"} == 0
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Calorie tracker target down"
+            description: "Pod {{ $labels.pod }} has not been scraped for 2 minutes."
+        - alert: CalorieTrackerNoReplicas
+          expr: count(up{job="calorie-tracker"} == 1) < 1
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "No healthy calorie-tracker replicas"
+            description: "All calorie-tracker pods are down or unscraped."
