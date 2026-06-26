@@ -1,8 +1,10 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
@@ -47,7 +49,14 @@ func connectDB() {
 		dsn = "host=localhost user=postgres password=postgres dbname=caloriedb port=5432 sslmode=disable"
 	}
 	var err error
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	for attempt := 1; attempt <= 10; attempt++ {
+		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err == nil {
+			break
+		}
+		log.Printf("database not ready (attempt %d/10): %v", attempt, err)
+		time.Sleep(3 * time.Second)
+	}
 	if err != nil {
 		panic("failed to connect to database: " + err.Error())
 	}

@@ -41,11 +41,10 @@ metadata:
   labels:
     app: calorie-tracker
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: calorie-tracker
   ports:
     - name: http
       port: 8080
       targetPort: 8080
-      nodePort: 30080
