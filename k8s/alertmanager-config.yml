@@ -1,0 +1,33 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: slack-alerts
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  route:
+    receiver: slack
+    matchers:
+      - name: alertname
+        matchType: =~
+        value: "CalorieTracker.*"
+    groupBy: ['alertname']
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 1h
+  receivers:
+    - name: slack
+      slackConfigs:
+        - apiURL:
+            name: slack-webhook
+            key: url
+          channel: '#alerts'
+          sendResolved: true
+          title: '[{{ .Status | toUpper }}] {{ .GroupLabels.alertname }}'
+          text: |-
+            {{ range .Alerts }}
+            *Alert:* {{ .Annotations.summary }}
+            *Details:* {{ .Annotations.description }}
+            *Severity:* {{ .Labels.severity }}
+            {{ end }}
