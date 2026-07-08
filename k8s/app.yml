@@ -17,6 +17,7 @@ spec:
       labels:
         app: calorie-tracker
     spec:
+      serviceAccountName: calorie-tracker
       containers:
         - name: calorie-tracker
           image: jonathanhjr/calorie-tracker:latest
@@ -25,7 +26,10 @@ spec:
             - containerPort: 8080
           env:
             - name: DATABASE_URL
-              value: host=postgres user=postgres password=postgres dbname=caloriedb port=5432 sslmode=disable
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: url
           resources:
             requests:
               cpu: 100m

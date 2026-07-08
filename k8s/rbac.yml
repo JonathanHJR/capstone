@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: calorie-tracker
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: calorie-tracker
+  namespace: default
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: calorie-tracker
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: calorie-tracker
+    namespace: default
+roleRef:
+  kind: Role
+  name: calorie-tracker
+  apiGroup: rbac.authorization.k8s.io
