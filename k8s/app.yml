@@ -7,6 +7,11 @@ spec:
   selector:
     matchLabels:
       app: calorie-tracker
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
@@ -21,6 +26,13 @@ spec:
           env:
             - name: DATABASE_URL
               value: host=postgres user=postgres password=postgres dbname=caloriedb port=5432 sslmode=disable
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
           livenessProbe:
             httpGet:
               path: /health
