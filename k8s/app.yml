@@ -20,7 +20,7 @@ spec:
       serviceAccountName: calorie-tracker
       containers:
         - name: calorie-tracker
-          image: jonathanhjr/calorie-tracker:latest
+          image: 910929919817.dkr.ecr.ap-southeast-1.amazonaws.com/calorie-tracker:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
