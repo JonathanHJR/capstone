@@ -7,7 +7,7 @@ param([Parameter(Mandatory)][ValidateSet("setup","teardown")][string]$Action)
 
 $ECR     = "910929919817.dkr.ecr.ap-southeast-1.amazonaws.com"
 $REGION  = "ap-southeast-1"
-$PROFILE = "capstone"
+$AWS_PROFILE = "capstone"
 
 # --- Pre-flight checks -----------------------------------------------------
 Write-Host "==> Pre-flight checks..."
@@ -23,7 +23,7 @@ try {
 
 # Ensure kubectl points at EKS (runs early and again before k8s steps)
 function Set-EKSContext {
-    aws eks update-kubeconfig --region $REGION --name capstone-cluster --profile $PROFILE 2>&1 | Out-Null
+    aws eks update-kubeconfig --region $REGION --name capstone-cluster --profile $AWS_PROFILE 2>&1 | Out-Null
 }
 
 # -----------------------------------------------------------------------
@@ -38,7 +38,7 @@ if ($Action -eq "setup") {
     Set-EKSContext
 
     Write-Host "==> [3/7] Building and pushing image to ECR..."
-    $token = aws ecr get-login-password --region $REGION --profile $PROFILE
+    $token = aws ecr get-login-password --region $REGION --profile $AWS_PROFILE
     docker login --username AWS --password "$token" $ECR
     docker build -t "$ECR/calorie-tracker:latest" .
     docker push "$ECR/calorie-tracker:latest"
@@ -90,6 +90,7 @@ if ($Action -eq "setup") {
         --namespace monitoring
 
     Write-Host "==> [7/7] Applying monitoring and policy manifests..."
+    kubectl apply -f k8s/servicemonitor.yml
     kubectl apply -f k8s/kyverno-policies.yml
     kubectl apply -f k8s/alerts.yml
     kubectl apply -f k8s/grafana-dashboard.yml
